@@ -37,26 +37,7 @@ public class enemyManager : MonoBehaviour
         CounterTxt.text = (transform.childCount - 1).ToString();
     }
 
-    private void EndAttack()
-    {
-        // Saldırı sona erdiğinde karakterleri eski pozisyonlarına döndür
-        attack = false;
-
-        foreach (var kvp in originalPositions)
-        {
-            Transform child = kvp.Key;
-            Vector3 originalPos = kvp.Value;
-
-            // Karakterleri eski pozisyonlarına dönüştür
-            child.DOLocalMove(originalPos, 1f).SetEase(Ease.OutBack);
-            child.GetComponent<Animator>().SetBool("run", false);
-        }
-
-        if (enemy != null)
-        {
-            Destroy(enemy.gameObject);
-        }
-    }
+   
 
     private void FormatStickMan()
     {
@@ -80,7 +61,6 @@ public class enemyManager : MonoBehaviour
             {
                 Transform child = transform.GetChild(i);
 
-                // Rotate characters towards the enemy
                 Vector3 directionToEnemy = (enemyPos - child.position).normalized;
                 if (directionToEnemy != Vector3.zero)
                 {
@@ -90,7 +70,7 @@ public class enemyManager : MonoBehaviour
                         Time.deltaTime * 3f);
                 }
 
-                // Move the character towards the enemy
+                // Savaş anında karakterlerin hareketi
                 float distanceToEnemy = Vector3.Distance(child.position, enemy.position);
                 if (distanceToEnemy < 1.5f)
                 {
@@ -102,23 +82,19 @@ public class enemyManager : MonoBehaviour
                 }
             }
 
-            // Update count on screen
             UpdateCounterText();
 
-            if (enemy.childCount == 0)
-            {
-                EndAttack();
-            }
+           
         }
 
-        // Eğer childCount 0 ise hem kendini hem de parent'ı yok et
+        // Eğer childCount 0 olursa end fight
         if (transform.childCount == 0)
         {
             if (transform.parent != null)
             {
-                Destroy(transform.parent.gameObject); // Üst nesneyi yok et
+                Destroy(transform.parent.gameObject); 
             }
-            Destroy(gameObject); // Kendini yok et
+            Destroy(gameObject); 
         }
     }
 
@@ -132,13 +108,5 @@ public class enemyManager : MonoBehaviour
         }
     }
 
-    private void DestroyEnemyArea()
-    {
-        // Stop the attack and destroy the enemy GameObject
-        attack = false;
-        if (enemy != null)
-        {
-            Destroy(enemy.gameObject);
-        }
-    }
+
 }
